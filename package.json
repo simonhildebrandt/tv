@@ -1,0 +1,32 @@
+{
+  "name": "tv",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Simon Hildebrandt <simonhildebrandt@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "live-server --port=9000 --entry-file=index.html dev/",
+    "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js",
+    "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch",
+    "build_prod": "yarn esbuild src/index.jsx --bundle --outfile=public/index.js",
+    "deploy_functions": "firebase deploy --only functions",
+    "deploy_hosting": "yarn build_prod && yarn firebase deploy --only hosting",
+    "deploy_all": "yarn deploy_functions && yarn deploy_hosting",
+    "setup_api": "firebase functions:config:set api.conf=\"something\"",
+    "emulator": "firebase emulators:start --export-on-exit=./firebase_data --import=./firebase_data",
+    "setup_emulator": "cp -R default_data firebase_data"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@chakra-ui/react": "^1.7.3",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "esbuild": "^0.14.10",
+    "firebase": "^9.6.1",
+    "firebase-tools": "^10.0.1",
+    "framer-motion": "^5",
+    "live-server": "^1.2.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
