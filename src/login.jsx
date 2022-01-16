@@ -20,11 +20,11 @@ export default function Login() {
     isOpen: isLoginOpen,
     onOpen: onLoginOpen,
     onClose: onLoginClose
-  } = useDisclosure({defaultIsOpen: true});
+  } = useDisclosure();
 
   const inputRef = useRef();
 
-  const [email, updateEmail] = useState("simonhildebrandt@gmail.com");
+  const [email, updateEmail] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [isSent, setIsSent] = useState(false);
   const setEmail = event => {
