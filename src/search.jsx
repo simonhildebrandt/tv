@@ -15,16 +15,11 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 
 import useEscapeListener from './use-escape-listener';
-
 import { navigate } from './router';
+import { cachedImageUrl, apiUrl } from './utils';
 
+import ImageFallback from './image-fallback';
 
-
-function ImageFallback() {
-  return <Flex bg="gray.200" justify="center" align="center" width="64px" height="64px">
-    <Spinner/>
-  </Flex>
-}
 
 function SearchResults({results, state, onSelect}) {
   let resultList = [];
@@ -41,8 +36,9 @@ function SearchResults({results, state, onSelect}) {
         onClick={() => onSelect(result.id)}
         cursor="pointer"
         _hover={{ bg: 'gray.200' }}
+        bg="white"
       >
-        <Image boxSize="64px" fit="contain" src={result.image} fallback={<ImageFallback/>}/>
+        <Image boxSize="64px" fit="contain" src={cachedImageUrl(result.image)} fallback={<ImageFallback/>}/>
         <Flex direction="column" ml={4}>
         <Flex fontSize={16} fontWeight="bold">{result.title}</Flex>
         <Flex>{result.description}</Flex>
@@ -74,14 +70,12 @@ export default function Search({onClose, focusRef}) {
   const requestCancel = useRef();
 
   const debouncedSearch = useMemo(() => debounce(300, searchValue => {
-    console.log('searching for', searchValue);
-
     setSearchState('searching');
     requestCancel.current?.cancel();
     requestCancel.current = axios.CancelToken.source();
 
     axios.post(
-      "http://localhost:5001/screenager/us-central1/search",
+      apiUrl("search"),
       { searchValue },
       { cancelToken: requestCancel.current.token }
     )
@@ -129,7 +123,7 @@ export default function Search({onClose, focusRef}) {
         onFocus={openResults}
         ref={focusRef}
       />
-      <InputRightElement children={<CloseButton color='#2B3240' onClick={hideSearch} /> } />
+      <InputRightElement children={<CloseButton color='brand.100' onClick={hideSearch} /> } />
     </InputGroup>
     {showingResult &&
       <Flex
@@ -141,6 +135,8 @@ export default function Search({onClose, focusRef}) {
         top="40px"
         width="100%"
         bg="white"
+        overflow="hidden"
+        zIndex={1}
       >
         { searchState == 'new' ? (
           <Flex p={2} fontStyle="italic">Try searching for a movie or tv show name</Flex>

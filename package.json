@@ -6,14 +6,15 @@
   "license": "MIT",
   "scripts": {
     "serve": "live-server --port=9000 --entry-file=index.html dev/",
-    "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js",
-    "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch",
-    "build_prod": "yarn esbuild src/index.jsx --bundle --outfile=public/index.js",
+    "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --define:SITE_URL=false --define:API_HOST=false",
+    "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch --define:SITE_URL=false --define:API_HOST=false",
+    "build_prod": "yarn esbuild src/index.jsx --bundle --outfile=public/index.js --define:API_HOST=\\\"https://us-central1-screenager.cloudfunctions.net\\\" --define:SITE_URL=\\\"https://tv.requisite.link\\\"",
+    "deploy_firestore": "firebase deploy --only firestore",
     "deploy_functions": "firebase deploy --only functions",
     "deploy_hosting": "yarn build_prod && yarn firebase deploy --only hosting",
     "deploy_all": "yarn deploy_functions && yarn deploy_hosting",
     "setup_api": "firebase functions:config:set api.conf=\"something\"",
-    "emulator": "firebase emulators:start --export-on-exit=./firebase_data --import=./firebase_data",
+    "emulator": "CACHE=true firebase emulators:start --export-on-exit=./firebase_data --import=./firebase_data",
     "setup_emulator": "cp -R default_data firebase_data"
   },
   "dependencies": {
@@ -25,13 +26,16 @@
     "axios": "^0.24.0",
     "esbuild": "^0.14.10",
     "firebase": "^9.6.1",
+    "firebase-admin": "^10.0.1",
     "firebase-tools": "^10.0.1",
     "framer-motion": "^5",
     "live-server": "^1.2.1",
     "navigo": "^8.11.1",
     "react": "^17.0.2",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
+    "swr": "^1.1.2",
     "throttle-debounce": "^3.0.1"
   }
 }

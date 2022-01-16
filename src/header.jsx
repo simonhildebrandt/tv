@@ -1,19 +1,16 @@
 import React, { useRef } from 'react';
 
 import { Flex, Icon, IconButton, useDisclosure } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon, UnlockIcon } from '@chakra-ui/icons';
 import { BsTvFill } from "react-icons/bs";
 
 import { motion } from "framer-motion";
 
 import Search from './search';
+import { navigate } from './router';
 
+import { logout } from './firebase';
 
-
-const variants = {
-  open: { width: '100%' },
-  closed: { width: '0' }
-};
 
 export default function Header () {
   const {
@@ -29,20 +26,21 @@ export default function Header () {
     focusRef.current.select();
   }
 
-  return <Flex bg="#2B3240" p={2} direction="row">
+  return <Flex bg="brand.100" p={2} direction="row">
     <Flex>
-      <IconButton color="#F2DE77" variant="ghost" icon={<Icon as={BsTvFill}/>}/>
+      <IconButton onClick={() => navigate("/")} color="brand.300" variant="ghost" icon={<Icon as={BsTvFill}/>}/>
     </Flex>
     <Flex flexGrow={1} direction="row" justify="flex-end">
-      { !isSearchOpen && <IconButton color="#8596A6" variant="ghost" icon={<SearchIcon />} onClick={openSearch}/> }
+      { !isSearchOpen && <IconButton color="brand.200" variant="ghost" icon={<SearchIcon />} onClick={openSearch}/> }
       <motion.div
         initial="closed"
         transition={{ duration: 0.3 }}
         animate={isSearchOpen ? 'open' : 'closed'}
-        variants={variants}
+        variants={{open: { width: '100%' }, closed: { width: '0' }}}
       >
         <Search onClose={onSearchClose} focusRef={focusRef}/>
       </motion.div>
+      <IconButton onClick={logout} color="brand.200" variant="ghost" icon={<UnlockIcon/>} />
     </Flex>
   </Flex>
 }
