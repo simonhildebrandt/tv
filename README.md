@@ -2,4 +2,4 @@
 
 Track what show's you.re watching. Very early alpha.
 
-[TV.REQUISITE.LINK](tv.requisite.link)
+[TV.REQUISITE.LINK](http://tv.requisite.link)
