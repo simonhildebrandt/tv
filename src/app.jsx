@@ -52,8 +52,8 @@ export default function App() {
 
   return <Flex direction="column" height="100%">
     <Header/>
-    <Flex direction="column" overflowY="hidden" flex="1 1 auto">
-      <Flex direction="column" overflowY="auto" flexGrow={1}>{ page }</Flex>
+    <Flex direction="column" overflowY="hidden" flex="1 1 auto" justify="stretch">
+      <Flex direction="column" overflowY="auto" flexGrow={1} justify="stretch">{ page }</Flex>
     </Flex>
   </Flex>
 }

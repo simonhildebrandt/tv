@@ -1,22 +1,18 @@
-import useSWR from 'swr'
 import axios from 'axios';
 
 export const appName = "Screenager";
 
 export const cachedImageUrl = url => `//images.weserv.nl/?url=${url}`
 
-
 const api_host = API_HOST || "http://localhost:5001/screenager/us-central1";
 
-const fetcher = (...args) => axios(...args);
 export const apiUrl = path => `${api_host}/api/${path}`;
 
-export const useLocalSWR = path => {
-  const result = useSWR(apiUrl(path), fetcher);
-
-  return {
-    ...result,
-    data: result.data?.data,
-    response: result.data
-  }
+export const rollbarConfig = {
+  accessToken: '2eb328c7201341fe95cdf06b29a138e6',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  payload: {
+    environment: API_HOST ? 'production' : 'development',
+  },
 }

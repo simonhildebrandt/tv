@@ -154,12 +154,27 @@ function useFirestoreCollection(path, clause = null) {
   return { data, loaded };
 }
 
+function useFirestoreDocument(path) {
+  const [data, setData] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, path), snapshot => {
+      setData(snapshot.data());
+      setLoaded(true);
+    });
+
+    return () => { unsub() };
+  }, [path]);
+
+  return { data, loaded };
+}
+
 function setupUser(uid) {
   setDoc(doc(db, 'users', uid), {})
   .then(res => console.log('created!', res))
 
 }
-
 
 function addRecord(path, data) {
   console.log({path, data})
@@ -187,5 +202,6 @@ export {
   addRecord,
   updateRecord,
   deleteRecord,
-  useFirestoreCollection
+  useFirestoreCollection,
+  useFirestoreDocument
 }

@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Flex, Button, Spinner } from '@chakra-ui/react';
 
-import { useLocalSWR } from './utils';
+import axios from 'axios';
+
+import { apiUrl } from './utils';
 import { updateRecord } from './firebase';
 import EpisodeList from './episode-list';
 
 
-export default function SeasonList({id, imdbId, seasons, episodeData, onEpisodeDataUpdate}) {
-  const [season, setSeason] = useState(seasons[0]);
+export default function SeasonList({id, imdbId, seasons, episodeData, currentSeason, onUpdate}) {
+  const season = currentSeason || seasons[0];
+  const updateSeason = s => onUpdate({currentSeason: s});
 
-  const { data, error } = useLocalSWR(`show/${imdbId}/season/${season}`, season)
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(apiUrl(`show/${imdbId}/season/${season}`))
+      .then(result => {
+        setData(result.data);
+        setLoading(false);
+      })
+  }, [season]);
 
   const episodeUpdate = (update) => {
-    onEpisodeDataUpdate({ ...episodeData, ...update })
+    onUpdate({episodeData: { ...episodeData, ...update }})
   };
-
-  console.log('episodes?', data)
 
   return <Flex direction='column'>
     <Flex justify="flex-start">
@@ -27,19 +39,22 @@ export default function SeasonList({id, imdbId, seasons, episodeData, onEpisodeD
             key={s}
             bgColor={s == season ? 'brand.500' : 'gray.100'}
             size="sm" width="32px"
-            onClick={() => setSeason(s)}
+            onClick={() => updateSeason(s)}
           >{s}</Button>
         )) }
       </Flex>
     </Flex>
 
     { data ?
-      (<EpisodeList
-        season={season}
-        episodes={data.episodes}
-        episodeData={episodeData}
-        onEpisodeDataUpdate={episodeUpdate}
-      />) : (
+      (<Flex opacity={loading ? '0.7' : '1'} direction="column">
+          <EpisodeList
+            season={season}
+            episodes={data.episodes}
+            episodeData={episodeData}
+            onEpisodeDataUpdate={episodeUpdate}
+          />
+        </Flex>
+      ) : (
         <Spinner/>
       )
     }
