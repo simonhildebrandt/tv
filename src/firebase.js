@@ -13,7 +13,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-  doc
+  doc,
+  writeBatch
 } from "firebase/firestore"
 
 import {
@@ -193,6 +194,12 @@ function deleteRecord(path) {
   deleteDoc(doc(db, path));
 }
 
+function batchUpdate(updates) {
+  const batch = writeBatch(db);
+  updates.forEach(([ref, u]) => batch.update(doc(db, ref), u))
+  batch.commit();
+}
+
 
 export {
   logout,
@@ -203,5 +210,6 @@ export {
   updateRecord,
   deleteRecord,
   useFirestoreCollection,
-  useFirestoreDocument
+  useFirestoreDocument,
+  batchUpdate
 }

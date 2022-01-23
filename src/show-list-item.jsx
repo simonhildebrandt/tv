@@ -54,7 +54,8 @@ export default function ShowListItem({id, item, user, watched}) {
     episodeData,
     tvSeriesInfo,
     isOpen,
-    currentSeason
+    currentSeason,
+    index
   } = item;
 
   const typeLabel = type == 'TVSeries' ? 'TV series' : 'movie';

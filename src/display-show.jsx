@@ -23,12 +23,14 @@ function AddTools({showId, user, showData, seasonData}) {
   const episodeData = {};
   const watched = false;
 
-  seasonData.forEach(([key, season]) =>
+  seasonData.forEach(([_key, season]) =>
     season.episodes.forEach(({id}) => episodeData[id] = {watched})
   );
 
   const addShow = () => {
-    addRecord(`/users/${user.uid}/shows`, {...showData, episodeData})
+    const indices = Object.values(data).map(show => show.index);
+    const index = Math.max(...indices) + 1;
+    addRecord(`/users/${user.uid}/shows`, {...showData, index, episodeData})
   }
 
   const removeShow = () => {

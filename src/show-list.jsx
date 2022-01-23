@@ -4,13 +4,20 @@ import { Flex, Spinner, Button, IconButton } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { VscCollapseAll } from 'react-icons/vsc';
 
-import { updateRecord, useFirestoreCollection, useFirestoreDocument } from './firebase';
+import { Reorder } from "framer-motion"
+
+import {
+  updateRecord,
+  useFirestoreCollection,
+  useFirestoreDocument,
+  batchUpdate
+} from './firebase';
 import ShowListItem from './show-list-item';
 
 
 
 function EmptyMessage() {
-  return <Flex align="center">Search for shows to add with the <SearchIcon mx={1}/> icon above.</Flex>
+  return <Flex align="center">No items to show - search for shows to add with the <SearchIcon mx={1}/> icon above.</Flex>
 }
 
 const watchedFilterOptions = ['all', 'unwatched', 'watched'];
@@ -39,7 +46,7 @@ export default function ShowList({user}) {
   }, {});
 
 
-  const filtered = Object.entries(data).filter(([id, show]) => {
+  let filtered = Object.entries(data).filter(([id, show]) => {
     switch (watchedFilter) {
       case 'all':
         return true;
@@ -50,9 +57,9 @@ export default function ShowList({user}) {
     }
   });
 
-  const items = filtered.map(i => i[1]);
+  filtered = filtered.sort((a, b) => a[1].index - b[1].index);
 
-  if (items.length == 0) return <EmptyMessage/>
+  const items = filtered.map(i => i[1]);
 
   const anyOpen = items.some(item => item.isOpen);
 
@@ -61,6 +68,9 @@ export default function ShowList({user}) {
       updateRecord(`/users/${user.uid}/shows/${key}`, {isOpen: false});
     });
   };
+
+  const sortValues = filtered.map(item => item[0])
+  const setSortValues = order => batchUpdate(order.map((key, index) => [`/users/${user.uid}/shows/${key}`, {index}]));
 
   return <Flex
     bg="brand.200"
@@ -79,9 +89,17 @@ export default function ShowList({user}) {
         <Button size="sm" onClick={cycleWatchedFilter}>Showing {watchedFilter}</Button>
         <IconButton onClick={closeAll} disabled={!anyOpen} size="sm" icon={<VscCollapseAll/>}/>
       </Flex>
-      { filtered.map(([id, item]) => (
-        <ShowListItem key={id} id={id} item={item} user={user} watched={watchedStatus[id]}/>
-      )) }
+      { items.length == 0 ? (
+        <EmptyMessage/>
+      ) : (
+        <Reorder.Group as="div" axis="y" values={sortValues} onReorder={setSortValues}>
+          { filtered.map(([id, item]) => (
+            <Reorder.Item as="div" key={id} value={id}>
+              <ShowListItem key={id} id={id} item={item} user={user} watched={watchedStatus[id]}/>
+            </Reorder.Item>
+          )) }
+        </Reorder.Group>
+      ) }
     </Flex>
   </Flex>
 }

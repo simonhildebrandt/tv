@@ -5,11 +5,11 @@ import { VscExpandAll, VscCloseAll } from "react-icons/vsc";
 
 
 
-function EpisodeListItem({episode, state, onClick}) {
+function EpisodeListItem({episode, state = { watched: false }, onClick}) {
   const { episodeNumber } = episode;
 
-  const { watched } = state || { watched: false };
-  const handleClick = () => onClick({watched: !watched});
+  const { watched } = state;
+  const handleClick = () => onClick({...state, watched: !watched});
 
   return <Button
     onClick={handleClick}
