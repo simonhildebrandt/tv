@@ -4,11 +4,9 @@ import { Box, Flex, Button } from '@chakra-ui/react';
 
 
 export default function SeasonsShow({seasons}) {
-  console.log({seasons})
   const [currentSeason, setCurrentSeason] = useState(seasons[0][0]);
   const episodes = seasons.find(season => season[0] == currentSeason)[1].episodes;
 
-  console.log({episodes})
 
   return <Flex display="column" width="100%" flexShrink={1}>
     <Flex align="center" mb={6}>

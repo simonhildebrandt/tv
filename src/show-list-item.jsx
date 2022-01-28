@@ -42,7 +42,7 @@ function DeleteWidget({onDelete}) {
 }
 
 
-export default function ShowListItem({id, item, user, watched}) {
+export default function ShowListItem({id, item, user, watched, sorting}) {
   const {
     id: imdbId,
     title,
@@ -84,6 +84,8 @@ export default function ShowListItem({id, item, user, watched}) {
     updateRecord(selfPath, data);
   }
 
+  const showOpen = isOpen && !sorting;
+
   return <Flex
     p={2}
     borderBottomWidth={1}
@@ -110,14 +112,14 @@ export default function ShowListItem({id, item, user, watched}) {
         <Flex align="center">{year} {typeLabel} - {runtimeMins}m - {imDbRating} <StarIcon color="yellow.500"/></Flex>
       </Flex>
       <Flex>
-        <IconButton variant="ghost" onClick={onToggle} icon={isOpen ? <ChevronUpIcon/> : <ChevronDownIcon/>} />
+        { !sorting && <IconButton variant="ghost" onClick={onToggle} icon={showOpen ? <ChevronUpIcon/> : <ChevronDownIcon/>} /> }
       </Flex>
     </Flex>
 
     <motion.div
-      initial={isOpen ? "open" : "closed"}
+      initial={showOpen ? "open" : "closed"}
       transition={{ duration: 0.2 }}
-      animate={isOpen ? 'open' : 'closed'}
+      animate={showOpen ? 'open' : 'closed'}
       variants={{open: { height: 'auto' }, closed: { height: '0' }}}
     >
       <Flex mt={2} direction="column">

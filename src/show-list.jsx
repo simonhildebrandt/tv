@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Flex, Spinner, Button, IconButton } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { VscCollapseAll } from 'react-icons/vsc';
+import { CgReorder } from "react-icons/cg";
 
 import { Reorder } from "framer-motion"
 
@@ -26,6 +27,9 @@ export default function ShowList({user}) {
   const { data, loaded } = useFirestoreCollection(`/users/${user.uid}/shows`)
   const { data: userData, loaded: userLoaded } = useFirestoreDocument(`/users/${user.uid}`)
 
+  const [sorting, setSorting] = useState(false);
+  const toggleSorting = () => setSorting(!sorting);
+
   if (!loaded || !userLoaded) return <Spinner/>
 
   const { watchedFilterId = 0 } = userData;
@@ -47,6 +51,8 @@ export default function ShowList({user}) {
 
 
   let filtered = Object.entries(data).filter(([id, show]) => {
+    if (sorting) return true;
+
     switch (watchedFilter) {
       case 'all':
         return true;
@@ -85,20 +91,32 @@ export default function ShowList({user}) {
       maxWidth="600px"
       flexGrow={1}
     >
-      <Flex justify="flex-end" mb={2} align="center" gap={2}>
-        <Button size="sm" onClick={cycleWatchedFilter}>Showing {watchedFilter}</Button>
-        <IconButton onClick={closeAll} disabled={!anyOpen} size="sm" icon={<VscCollapseAll/>}/>
+      <Flex align="center" justify="space-between" mb={2}>
+        <IconButton onClick={toggleSorting} colorScheme={sorting ? 'blue' : 'gray'} size="sm" icon={<CgReorder/>}/>
+        { !sorting && <Flex justify="flex-end" align="center" gap={2}>
+          <Button size="sm" onClick={cycleWatchedFilter}>Showing {watchedFilter}</Button>
+          <IconButton onClick={closeAll} disabled={!anyOpen} size="sm" icon={<VscCollapseAll/>}/>
+        </Flex>
+        }
       </Flex>
       { items.length == 0 ? (
         <EmptyMessage/>
       ) : (
-        <Reorder.Group as="div" axis="y" values={sortValues} onReorder={setSortValues}>
-          { filtered.map(([id, item]) => (
-            <Reorder.Item as="div" key={id} value={id}>
-              <ShowListItem key={id} id={id} item={item} user={user} watched={watchedStatus[id]}/>
-            </Reorder.Item>
-          )) }
-        </Reorder.Group>
+        <>
+          { sorting ? (
+            <Reorder.Group as="div" axis="y" values={sortValues} onReorder={setSortValues}>
+            { filtered.map(([id, item]) => (
+              <Reorder.Item as="div" key={id} value={id}>
+                <ShowListItem key={id} id={id} item={item} user={user} watched={watchedStatus[id]} sorting={true}/>
+              </Reorder.Item>
+            )) }
+          </Reorder.Group>
+        ) : (
+            filtered.map(([id, item]) => (
+              <ShowListItem key={id} id={id} item={item} user={user} watched={watchedStatus[id]} sorting={false}/>
+            ))
+          ) }
+        </>
       ) }
     </Flex>
   </Flex>

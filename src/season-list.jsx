@@ -48,6 +48,7 @@ export default function SeasonList({id, imdbId, seasons, episodeData, currentSea
     { data ?
       (<Flex opacity={loading ? '0.7' : '1'} direction="column">
           <EpisodeList
+            imdbId={imdbId}
             season={season}
             episodes={data.episodes}
             episodeData={episodeData}

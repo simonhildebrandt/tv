@@ -80,7 +80,6 @@ export default function Search({onClose, focusRef}) {
       { cancelToken: requestCancel.current.token }
     )
     .then(res => {
-      console.log(res.data)
       setSearchState('done');
       setSearchResults(res.data.results);
       requestCancel.current = null;
@@ -89,8 +88,6 @@ export default function Search({onClose, focusRef}) {
       if (!axios.isCancel(thrown)) throw(thrown);
     })
   }), []);
-
-  //useEffect(() => debouncedSearch(searchValue), []);
 
   const ref = React.useRef()
   useOutsideClick({
