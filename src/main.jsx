@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Flex, Heading, Spinner } from '@chakra-ui/react';
+import { Flex, Heading, Spinner } from '@chakra-ui/react';
 
 import { appName } from './utils';
 import Login from './login';

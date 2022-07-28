@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
 import {
   CloseButton,
-  Input, Flex,
+  Input,
+  Flex,
   Image,
   SimpleGrid,
   InputRightElement,
   InputGroup,
   Skeleton,
-  Spinner,
   useOutsideClick
 } from '@chakra-ui/react'
 import { debounce } from 'throttle-debounce';
